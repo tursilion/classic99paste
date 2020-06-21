@@ -34,12 +34,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			// just ask Classic99 to reset
 			SendMessage(hWnd, WM_COMMAND, ID_FILE_RESET, 0);
 			// give it a moment...
-			Sleep(200);
+			Sleep(500);
 		} else if (0 == _stricmp(argv[1], "-resetOD")) {
 			// just ask Classic99 to reset
 			SendMessage(hWnd, WM_COMMAND, ID_FILE_RESET, 0);
 			// give it a moment...
-			Sleep(200);
+			Sleep(500);
 			// and go to overdrive
 			SendMessage(hWnd, WM_COMMAND, ID_CPUTHROTTLING_CPUOVERDRIVE, 0);
 		} else {
@@ -98,6 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		LPSTR pTxt = (LPSTR)GlobalLock(hMem);
 		memcpy(pTxt, pOutStr, nPtr+1);
 		GlobalUnlock(hMem);
+        free(pOutStr);
 		bool bRet = (SetClipboardData(CF_TEXT, hMem) != NULL);
 		CloseClipboard();
 		if (!bRet) {
@@ -109,8 +110,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 7;
 	}
 
-	// tell Classic99 to paste
-	SendMessage(hWnd, WM_COMMAND, ID_EDITPASTE, 0);
+	// tell Classic99 to paste - sometimes getting access denied
+    // under Win10, maybe the CloseClipboard is taking longer?
+    // Maybe virus checker is interfering...
+    Sleep(100);
+	PostMessage(hWnd, WM_COMMAND, ID_EDITPASTE, 0);
 
 	return 0;
 
